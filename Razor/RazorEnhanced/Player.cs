@@ -830,9 +830,23 @@ namespace RazorEnhanced
             get
             {
                 List<string> buffs = new List<string>();
-                foreach (BuffIcon icon in World.Player.Buffs)
+                foreach (var bi in World.Player.Buffs.Values)
                 {
-                    buffs.Add(GetBuffDescription(icon));
+                    buffs.Add(GetBuffDescription(bi.Buff));
+                }
+                return buffs;
+            }
+        }
+        
+        public static List<BuffInfo> BuffsInfo
+        {
+            get
+            {
+                List<BuffInfo> buffs = new List<BuffInfo>();
+                
+                foreach (var buff in World.Player.Buffs.Values)
+                {
+                    buffs.Add( new BuffInfo(buff));
                 }
                 return buffs;
             }
@@ -962,10 +976,12 @@ namespace RazorEnhanced
             if (World.Player == null || World.Player.Buffs == null)
                 return false;
 
+            var currentBuffs = World.Player.Buffs.Values.ToList();
+            
             // if exact match use it
-            for (int i = 0; i < World.Player.Buffs.Count; i++)
+            for (int i = 0; i < currentBuffs.Count; i++)
             {
-                if (GetBuffDescription(World.Player.Buffs[i]) == buffname)
+                if (GetBuffDescription(currentBuffs[i].Buff) == buffname)
                     return true;
             }
 
@@ -973,11 +989,57 @@ namespace RazorEnhanced
             string useBuffname = GuessBuffName(buffname);
             for (int i = 0; i < World.Player.Buffs.Count; i++)
             {
-                if (GetBuffDescription(World.Player.Buffs[i]) == useBuffname)
+                if (GetBuffDescription(currentBuffs[i].Buff) == useBuffname)
                     return true;
             }
 
             return false;
+        }
+        /// <summary>
+        /// Check if a buff information is active by buff name and returns it.
+        /// </summary>
+        /// <param name="buffName">buff name</param>
+        /// <returns>Buff information</returns>
+        public static BuffInfo GetBuffInfo(string buffName)
+        {
+            BuffInfo result = null;
+
+            if (World.Player != null && World.Player.Buffs != null)
+            {
+                // if Match with enum
+                BuffIcon buffIcon;
+                
+                if (Enum.TryParse(buffName, out buffIcon))
+                {
+                    buffName = GetBuffDescription(buffIcon);
+                }
+                
+                // if exact match use it
+                foreach (var b in BuffsInfo)
+                {
+                    if (b.Buff == buffName)
+                    {
+                        result = b;
+                        break;
+                    }
+                }
+
+                if (result == null)
+                {
+                    // try to guess correct spelling
+                    buffName = GuessBuffName(buffName);
+                    foreach (var b in BuffsInfo)
+                    {
+                        if (b.Buff == buffName)
+                        {
+                            result = b;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         // Special skill Icon

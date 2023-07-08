@@ -1,7 +1,33 @@
 
 
+using System;
+
 namespace Assistant
 {
+    /// <summary>
+    /// Contains all buff information
+    /// </summary>
+    internal class BuffInfo
+    {
+        /// <summary>
+        /// Buff type
+        /// </summary>
+        public BuffIcon Buff { get; set; }
+        /// <summary>
+        /// Started datetime useful for remaining calculations
+        /// </summary>
+        public DateTime Started { get; set; }
+        /// <summary>
+        /// Buff time elapsed
+        /// </summary>
+        public TimeSpan Elapsed => (DateTime.Now - Started);
+
+        /// <summary>
+        /// Total duration
+        /// </summary>
+        public TimeSpan Duration { get; set; }
+    }
+    
     internal enum BuffIcon : ushort
     {
         DismountPrevention = 0x3E9,

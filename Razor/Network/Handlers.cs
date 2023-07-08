@@ -3553,16 +3553,47 @@ namespace Assistant
                 switch (action)
                 {
                     case 0x01: // show                        
-                        if (World.Player != null && !World.Player.Buffs.Contains(buff))
+                        if (World.Player != null)
                         {
-                            World.Player.Buffs.Add(buff);
+                            BuffInfo currentBuff;
+                            if (!World.Player.Buffs.TryGetValue(buff, out currentBuff))
+                            {
+                                currentBuff = new BuffInfo()
+                                {
+                                    Buff = buff,
+                                };
+                            }
+                            
+                            currentBuff.Started = DateTime.Now;
+                            
+                            //Have additional information
+                            if (p.Length >= 44)
+                            {
+                                p.ReadUInt32(); //null data
+                                
+                                p.ReadUInt16(); //icon
+                                p.ReadUInt16(); //action
+                                
+                                p.ReadUInt32(); //null data
+
+                                currentBuff.Duration = TimeSpan.FromSeconds(p.ReadUInt16());
+
+                                p.ReadByte(); //null data
+                                p.ReadByte(); //null data
+                                p.ReadByte(); //null data
+                                
+                                var tileCliloc = p.ReadUInt32();
+                                var secondaryCliloc = p.ReadUInt32();
+                            }
+                            
+                            World.Player.Buffs[buff] = currentBuff;
                         }
                         break;
 
                     case 0x0: // remove
-                        if (World.Player != null && World.Player.Buffs.Contains(buff))
+                        if (World.Player != null && World.Player.Buffs.ContainsKey(buff))
                         {
-                            World.Player.Buffs.Remove(buff);
+                            World.Player.Buffs.TryRemove(buff, out _);
                         }
                         break;
                 }
