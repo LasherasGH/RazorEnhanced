@@ -241,8 +241,12 @@ namespace Assistant
         private readonly ConcurrentDictionary<BuffIcon, BuffInfo> m_Buffs = new ConcurrentDictionary<BuffIcon, BuffInfo>();
         internal ConcurrentDictionary<BuffIcon, BuffInfo> Buffs { get { return m_Buffs; } }
 
-        private readonly List<SkillIcon> m_SkillEnabled = new List<SkillIcon>();
-        internal List<SkillIcon> SkillEnabled { get { return m_SkillEnabled; } }
+        private List<SkillIcon> m_SkillEnabled = new List<SkillIcon>();
+        internal List<SkillIcon> SkillEnabled 
+        { 
+            get { return m_SkillEnabled; }
+            set { m_SkillEnabled = value; }
+        }
 
 
         internal PlayerData(Serial serial)

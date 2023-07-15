@@ -2,6 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Assistant.UI;
 using RazorEnhanced;
 using NLog;
@@ -2876,7 +2877,10 @@ namespace Assistant
                                 case 0x0: // set white icon
                                     if (World.Player != null && World.Player.SkillEnabled.Contains(skill))
                                     {
-                                        World.Player.SkillEnabled.Remove(skill);
+                                        //fix InvalidOperationException thread safe
+                                        var newSkillsEnabled = World.Player.SkillEnabled.ToList();
+                                        newSkillsEnabled.Remove(skill);
+                                        World.Player.SkillEnabled = newSkillsEnabled;
                                         System.Threading.Thread doAction = new System.Threading.Thread(() => RazorEnhanced.SpellGrid.UpdateSkillHighLight(skill, false));
                                         doAction.Start();
                                     }

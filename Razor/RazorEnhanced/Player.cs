@@ -217,6 +217,11 @@ namespace RazorEnhanced
         public static uint PrimarySpecial { get { return SpecialMoves.PrimaryGumpId; } }
         public static uint SecondarySpecial { get { return SpecialMoves.SecondaryGumpId; } }
 
+        /// <summary>
+        /// Contains all skills enabled (grid icons with red background)
+        /// </summary>
+        public static List<string> SkillsEnabled => World.Player.SkillEnabled.Select(p => p.ToString()).ToList();
+        
 
         // Self
         /// <summary>
